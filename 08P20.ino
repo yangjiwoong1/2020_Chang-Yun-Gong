@@ -30,7 +30,7 @@ void setup() {
   dist_raw = 0.0;// raw distance output from USS (unit: mm)
   dist_raw_past = 0,0 ;
   scale = 0.001 * 0.5 * SND_VEL;
-  gap = 256/101;
+  gap = 255/100;
 // initialize serial port
   Serial.begin(57600);
 
