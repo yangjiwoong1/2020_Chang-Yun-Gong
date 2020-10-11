@@ -13,6 +13,7 @@
 // global variables
 int index = 0;
 float dist_array[_dist_array_length];
+float dist_array_copy[_dist_array_length];
 float timeout; // unit: us
 float dist_min, dist_max, dist_raw,dist_median; // unit: mm
 unsigned long last_sampling_time; // unit: ms
@@ -51,19 +52,24 @@ void loop() {
       dist_array[temp_index] = dist_array[temp_index+1];
     }
     dist_array[index] = dist_raw;
-    if (_dist_array_length%2 == 1) dist_median = dist_array[(index/2)];
+    Copy();
+    Ascending_sort();
+  
+    if (_dist_array_length%2 == 1) dist_median = dist_array_copy[(index/2)];
      else {
       int temp = (index-1)/2 ;
-      dist_median = (dist_array[temp]+dist_array[temp+1])/2 ;
+      dist_median = (dist_array_copy[temp]+dist_array_copy[temp+1])/2 ;
     }
     }
     
   else if (index == _dist_array_length-1 && dist_array[index] == -1){
     dist_array[index] = dist_raw;
-    if (_dist_array_length%2 == 1) dist_median = dist_array[(index/2)];
+    Copy();
+    Ascending_sort();
+    if (_dist_array_length%2 == 1) dist_median = dist_array_copy[(index/2)];
      else {
       int temp = (index-1)/2 ;
-      dist_median = (dist_array[temp]+dist_array[temp+1])/2 ;
+      dist_median = (dist_array_copy[temp]+dist_array_copy[temp+1])/2 ;
     }
   }
 
@@ -107,4 +113,23 @@ float USS_measure(int TRIG, int ECHO)
   reading = pulseIn(ECHO, HIGH, timeout) * scale; // unit: mm
   if(reading < dist_min || reading > dist_max) reading = 0.0; // return 0 when out of range.
   return reading;
+}
+
+void Copy() {
+  for (int i=0;i<=_dist_array_length - 1;i++)
+  dist_array_copy[i] = dist_array[i];
+}
+
+void Ascending_sort(){
+ float temp;
+ for (int i=0;i<_dist_array_length-1;i++){
+  for (int k=0;k<_dist_array_length-1;k++) {
+  if (dist_array_copy[k]>dist_array_copy[k+1]){
+    temp = dist_array_copy[k];
+    dist_array_copy[k] = dist_array_copy[k+1];
+    dist_array_copy[k+1] = temp;
+  }
+ }
+
+}
 }
