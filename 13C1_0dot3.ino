@@ -25,8 +25,10 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if(millis() < last_sampling_time + interval) return;
-  duty_curr += duty_chg_per_interval;
-  myservo.writeMicroseconds(duty_curr);
-  last_sampling_time += interval;
+  if (millis() < last_sampling_time + interval) return;
+  if (duty_curr < duty_target) {
+      duty_curr += duty_chg_per_interval;
+      myservo.writeMicroseconds(duty_curr);
+      last_sampling_time += interval;
+ }
 }
